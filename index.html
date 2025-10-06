@@ -243,6 +243,9 @@
                            throw new Error(`Ошибка доступа (403). Проверьте настройки API-ключа и убедитесь, что API включен.`);
                         } else if (response.status === 429) {
                            console.warn(`Rate limit hit. Retrying in ${delay * Math.pow(2, i)}ms...`);
+                           if (i === retries - 1) { // Если это последняя попытка, выдать понятную ошибку
+                                throw new Error(`Слишком много запросов (429). Попробуйте позже.`);
+                           }
                         }
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -571,7 +574,7 @@
                 imgState.status = 'generating';
                 renderGallery();
                 await generateSingleImage(imgState, userPrompt);
-                await new Promise(res => setTimeout(res, 2500)); // Increased delay
+                await new Promise(res => setTimeout(res, 3500)); // Увеличена задержка
             }
             
             generateButton.disabled = false;
@@ -639,4 +642,5 @@
     </script>
 </body>
 </html>
+
 
