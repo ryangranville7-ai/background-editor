@@ -76,12 +76,12 @@
                     <h2 class="text-lg md:text-xl font-semibold mb-4 text-white">1. Загрузите фото</h2>
                     <div class="flex gap-2">
                         <label for="image-upload" class="custom-file-upload flex-grow">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-500 mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-500 mb-2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
                             <span class="font-medium text-blue-400">Добавить фото</span>
                             <span class="mt-1 block text-xs text-gray-500">Выбрать из файлов</span>
                         </label>
                          <button id="camera-btn" class="flex-shrink-0 p-4 border-2 border-dashed border-gray-700 rounded-lg flex items-center justify-center hover:bg-gray-800/50 transition" title="Сделать фото с камеры">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-500"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8 text-gray-500"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>
                         </button>
                     </div>
                     <input id="image-upload" type="file" accept="image/png, image/jpeg, image/webp" multiple>
@@ -92,7 +92,7 @@
                         <h2 class="text-lg md:text-xl font-semibold text-white">✨ Анализ и Идеи</h2>
                         <div class="flex items-center gap-3">
                              <button id="refresh-ideas-btn" class="text-gray-400 hover:text-white transition flex items-center justify-center" title="Обновить идеи">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24" 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                             </button>
                             <div id="analysis-loader" class="loader small-loader hidden"></div>
                         </div>
@@ -121,7 +121,7 @@
                             <div id="background-preview-container" class="mt-4 relative hidden">
                                 <img id="background-preview-image" src="" class="w-full rounded-lg">
                                 <button id="remove-background-btn" class="absolute top-2 right-2 bg-black/50 hover:bg-black/70 text-white p-1 rounded-full transition flex items-center justify-center" title="Удалить фон">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
                                 </button>
                             </div>
                         </div>
@@ -161,7 +161,7 @@
     <div id="image-preview-modal" class="fixed inset-0 bg-black/90 flex items-center justify-center p-4 hidden z-50 cursor-pointer">
         <img id="preview-image" src="" class="max-w-full max-h-full rounded-lg">
         <button id="close-preview-btn" class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 text-white p-2 rounded-full transition flex items-center justify-center" title="Закрыть">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24" 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
     </div>
 
@@ -191,11 +191,10 @@
         const closePreviewBtn = document.getElementById('close-preview-btn');
         const refreshIdeasBtn = document.getElementById('refresh-ideas-btn');
 
-        const GEMINI_API_KEY = "AIzaSyCqbHUnLAXebrp7g3TEj68PGso5c4sUhy4";
-
         let imageFilesState = [];
         let customBackgroundBase64 = null;
         let currentStream = null;
+        let analysisTimeout;
 
         const fileToBase64 = (file) => new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -229,8 +228,8 @@
             reader.onerror = reject;
         });
         
-        async function callGeminiAPI(payload, retries = 3, delay = 2000) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`;
+        async function callGeminiAPI(payload, retries = 3, delay = 2500) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent`;
             for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(apiUrl, {
@@ -243,7 +242,7 @@
                            throw new Error(`Ошибка доступа (403). Проверьте настройки API-ключа и убедитесь, что API включен.`);
                         } else if (response.status === 429) {
                            console.warn(`Rate limit hit. Retrying in ${delay * Math.pow(2, i)}ms...`);
-                           if (i === retries - 1) { // Если это последняя попытка, выдать понятную ошибку
+                           if (i === retries - 1) { 
                                 throw new Error(`Слишком много запросов (429). Попробуйте позже.`);
                            }
                         }
@@ -288,7 +287,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
                                     </button>
                                     <a href="${imgState.resultSrc}" download="replaced_${imgState.id.split('-')[0] || 'image'}.png" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full transition duration-300 flex items-center justify-center" title="Скачать">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                                     </a>
                                 </div>
                             `;
@@ -547,7 +546,6 @@
                     imgState.error = null;
                     imgState.resultSrc = null;
                     renderGallery();
-                    
                     await generateSingleImage(imgState, userPrompt);
                 }
             }
@@ -564,17 +562,11 @@
 
             generateButton.disabled = true;
 
-            imageFilesState.forEach(state => {
-                state.status = 'pending';
-                state.resultSrc = null;
-                state.error = null;
-            });
-            
             for (const imgState of imageFilesState) {
                 imgState.status = 'generating';
                 renderGallery();
                 await generateSingleImage(imgState, userPrompt);
-                await new Promise(res => setTimeout(res, 3500)); // Увеличена задержка
+                await new Promise(res => setTimeout(res, 1500)); 
             }
             
             generateButton.disabled = false;
@@ -642,5 +634,4 @@
     </script>
 </body>
 </html>
-
 
