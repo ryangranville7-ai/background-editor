@@ -1,1 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сбор данных с Avito</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-4xl bg-slate-800 rounded-2xl shadow-lg p-6 md:p-8">
+        <!-- Заголовок -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-sky-400">Анализатор страницы Avito</h1>
+            <p class="text-slate-400 mt-2">1. Сделайте поиск на Avito. 2. Скопируйте URL из адресной строки. 3. Вставьте его сюда.</p>
+        </div>
+
+        <!-- Форма ввода -->
+        <div class="space-y-4">
+            <div>
+                <label for="urlInput" class="block text-sm font-medium text-slate-300 mb-2">URL-адрес страницы с результатами поиска Avito</label>
+                <input type="url" id="urlInput" placeholder="https://www.avito.ru/vladimir/zapchasti_i_aksessuary?q=G4FA" class="w-full bg-slate-700 border border-slate-600 text-white rounded-lg p-3 focus:ring-2 focus:ring-sky-500 focus:outline-none transition">
+            </div>
+            <button id="scrapeBtn" class="w-full bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search mr-2" viewBox="0 0 16 16">
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                </svg>
+                Найти и обработать объявления
+            </button>
+        </div>
+
+        <!-- Область результатов -->
+        <div class="mt-8">
+            <div class="flex justify-between items-center border-b-2 border-slate-700 pb-2 mb-4">
+                <h2 class="text-2xl font-semibold">Результаты:</h2>
+                <div class="flex items-center gap-2">
+                     <label for="sortSelect" class="text-sm font-medium text-slate-300">Сортировать:</label>
+                     <select id="sortSelect" class="bg-slate-700 border border-slate-600 text-white text-sm rounded-lg p-2 focus:ring-2 focus:ring-sky-500 focus:outline-none transition">
+                        <option value="position">По позиции в поиске</option>
+                        <option value="price_asc">Сначала дешевле</option>
+                        <option value="price_desc">Сначала дороже</option>
+                     </select>
+                </div>
+            </div>
+            <div id="loader" class="hidden mx-auto loader"></div>
+            <div id="error" class="hidden text-center text-red-400 bg-red-900/30 p-4 rounded-lg"></div>
+            <div id="results" class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                 <p class="text-slate-400 p-4 text-center">Здесь появятся результаты после поиска.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlInput = document.getElementById('urlInput');
+        const sortSelect = document.getElementById('sortSelect');
+        const scrapeBtn = document.getElementById('scrapeBtn');
+        const resultsDiv = document.getElementById('results');
+        const errorDiv = document.getElementById('error');
+        const loader = document.getElementById('loader');
+
+        let currentAds = [];
+
+        function displayResults() {
+            resultsDiv.innerHTML = '';
+            const sortBy = sortSelect.value;
+            
+            if (currentAds.length === 0) {
+                 resultsDiv.innerHTML = '<p class="text-slate-400 p-4 text-center">Объявления не найдены. Проверьте URL или попробуйте снова.</p>';
+                return;
+            }
+
+            // Сортировка
+            const sortedAds = [...currentAds].sort((a, b) => {
+                if (sortBy === 'price_asc') return a.priceNum - b.priceNum;
+                if (sortBy === 'price_desc') return b.priceNum - a.priceNum;
+                return a.position - b.position;
+            });
+            
+            sortedAds.forEach(ad => {
+                 const resultCard = document.createElement('div');
+                resultCard.className = 'bg-slate-700 p-4 rounded-lg border border-slate-600 transition hover:bg-slate-600/50';
+                resultCard.innerHTML = `
+                    <div class="flex justify-between items-start gap-4">
+                        <h3 class="font-bold text-sky-400">${ad.title}</h3>
+                        <span class="flex-shrink-0 text-md font-bold text-slate-300 bg-slate-600 px-3 py-1 rounded-full" title="Позиция в поиске">${ad.position}</span>
+                    </div>
+                    <p class="text-slate-200 mt-2 text-lg"><strong>${ad.price}</strong></p>
+                    ${ad.partNumber !== 'Не указан' ? `<p class="text-slate-300 mt-1 text-sm">Номер запчасти: <span class="font-semibold text-slate-200">${ad.partNumber}</span></p>` : ''}
+                    <div class="flex items-center text-slate-400 mt-2 text-sm">
+                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-shop mr-2 flex-shrink-0" viewBox="0 0 16 16"><path d="M2.97 1.35A1 1 0 0 1 3.73 1h8.54a1 1 0 0 1 .76.35l2.609 3.044A1.5 1.5 0 0 1 16 5.37v.255a2.375 2.375 0 0 1-4.25 1.458A2.37 2.37 0 0 1 9.875 8 2.37 2.37 0 0 1 8 7.083 2.37 2.37 0 0 1 5.875 8a2.37 2.37 0 0 1-1.859-1.015A2.375 2.375 0 0 1 0 5.625V5.37a1.5 1.5 0 0 1 .361-.976l2.61-3.045zm1.78 4.275a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0 1.375 1.375 0 1 0 2.75 0V5.37a.5.5 0 0 0-.12-.325L12.27 2H3.73L1.12 5.045A.5.5 0 0 0 1 5.37v.255a1.375 1.375 0 0 0 2.75 0 .5.5 0 0 1 1 0zM1.5 8.5A.5.5 0 0 1 2 9v6h12V9a.5.5 0 0 1 1 0v6h.5a.5.5 0 0 1 0 1H.5a.5.5 0 0 1 0-1H1V9a.5.5 0 0 1 .5-.5M4 15h3v-5H4zm5-5v5h3V10z"/></svg>
+                        <span>${ad.store}</span>
+                    </div>
+                    <p class="text-slate-400 mt-1 text-sm">${ad.location}</p>
+                `;
+                resultsDiv.appendChild(resultCard);
+            });
+        }
+
+        scrapeBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            
+            currentAds = [];
+            resultsDiv.innerHTML = '';
+            errorDiv.classList.add('hidden');
+            
+            if (!url || !url.includes('avito.ru')) {
+                showError('Пожалуйста, введите корректный URL-адрес со страницы поиска Avito.');
+                return;
+            }
+
+            loader.classList.remove('hidden');
+            scrapeBtn.disabled = true;
+            scrapeBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+            const PROXIES = [
+                 {
+                    name: 'thingproxy.freeboard.io',
+                    url: (targetUrl) => `https://thingproxy.freeboard.io/fetch/${targetUrl}`,
+                    handler: async (response) => {
+                        if (!response.ok) throw new Error(`${response.status}`);
+                        return await response.text();
+                    }
+                },
+                {
+                    name: 'allorigins.win',
+                    url: (targetUrl) => `https://api.allorigins.win/get?url=${encodeURIComponent(targetUrl)}`,
+                    handler: async (response) => {
+                        if (!response.ok) throw new Error(`${response.status}`);
+                        const data = await response.json();
+                        return data.contents;
+                    }
+                },
+                {
+                    name: 'corsproxy.io',
+                    url: (targetUrl) => `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`,
+                    handler: async (response) => {
+                        if (!response.ok) throw new Error(`${response.status}`);
+                        return await response.text();
+                    }
+                }
+            ];
+
+            let html = null;
+            let lastError = null;
+
+            for (const proxy of PROXIES) {
+                try {
+                    const proxyUrl = proxy.url(url);
+                    console.log(`Trying proxy: ${proxy.name}`);
+                    const response = await fetch(proxyUrl);
+                    
+                    if (response.status === 429) {
+                        throw new Error(`429`);
+                    }
+                    
+                    html = await proxy.handler(response);
+                    if (html) {
+                        console.log(`Proxy ${proxy.name} succeeded.`);
+                        break;
+                    }
+                } catch (err) {
+                    console.error(`Proxy ${proxy.name} failed:`, err.message);
+                    lastError = err;
+                }
+            }
+            
+            try {
+                if (!html) {
+                    let errorMessage = `Не удалось получить данные. `;
+                    if (lastError && lastError.message.includes('429')) {
+                        errorMessage += `Прокси-серверы временно заблокированы из-за частых запросов. Пожалуйста, подождите несколько минут и попробуйте снова.`;
+                    } else {
+                        errorMessage += `Возможно, все прокси недоступны или Avito блокирует запросы.`;
+                    }
+                    throw new Error(errorMessage);
+                }
+
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                const adItems = doc.querySelectorAll('div[class*="iva-item-root"], [data-marker="item"]');
+                
+                if (adItems.length === 0) {
+                     showError('Не найдено ни одного объявления на полученной странице. Avito мог заблокировать запрос. Попробуйте обновить страницу на Avito и использовать новый URL.', url);
+                     return;
+                }
+
+                adItems.forEach((item, index) => {
+                    const titleEl = item.querySelector('h3[itemprop="name"], h4[class*="title-root"], a[data-marker="item-title"]');
+                    const priceEl = item.querySelector('[data-marker="item-price"], p[class*="price-price"], [class*="price-text"]');
+                    const cityEl = item.querySelector('div[data-marker="item-address"], div[class*="geo-geo"]');
+                    const storeEl = item.querySelector('[data-marker="seller-info-name"], [data-marker="seller-name"] > p');
+                    const partNumberEl = item.querySelector('[data-marker="item-sp-params"]');
+
+                    const title = titleEl ? titleEl.innerText.trim() : null;
+                    const price = priceEl ? priceEl.innerText.trim().replace(/\s+/g, ' ') : null;
+                    
+                    if (!title || !price) return;
+                    
+                    currentAds.push({
+                        title: title,
+                        price: price,
+                        priceNum: parseInt(price.replace(/\D/g, '')) || Infinity,
+                        location: cityEl ? cityEl.innerText.trim() : 'Город не найден',
+                        store: storeEl ? storeEl.innerText.trim() : 'Частное лицо',
+                        partNumber: partNumberEl ? partNumberEl.innerText.trim() : 'Не указан',
+                        position: index + 1
+                    });
+                });
+            } catch (err) {
+                console.error(`Ошибка при обработке:`, err);
+                showError(`Произошла ошибка: ${err.message}`, url);
+            }
+            
+            displayResults();
+            loader.classList.add('hidden');
+            scrapeBtn.disabled = false;
+            scrapeBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        });
+
+        function showError(message, url = null) {
+            errorDiv.innerHTML = ''; // Clear previous content
+            
+            const messageP = document.createElement('p');
+            messageP.textContent = message;
+            errorDiv.appendChild(messageP);
+
+            if (url) {
+                const urlDebugDiv = document.createElement('div');
+                urlDebugDiv.className = 'mt-4 text-sm text-left';
+                urlDebugDiv.innerHTML = `
+                    <p class="text-slate-400">Был запрошен следующий целевой URL:</p>
+                    <div class="mt-1 p-2 bg-slate-900 rounded break-all">
+                        <a href="${url}" target="_blank" class="text-sky-400 hover:underline">${url}</a>
+                    </div>
+                `;
+                errorDiv.appendChild(urlDebugDiv);
+            }
+
+            errorDiv.classList.remove('hidden');
+            resultsDiv.innerHTML = '';
+        }
+        
+        sortSelect.addEventListener('change', displayResults);
+
+    </script>
+</body>
+</html>
+
+
 
