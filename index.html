@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Пакетный Редактор Фона на Nano Banana</title>
+    <title>Пакетный Редактор Фона </title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -191,8 +191,6 @@
         const closePreviewBtn = document.getElementById('close-preview-btn');
         const refreshIdeasBtn = document.getElementById('refresh-ideas-btn');
 
-        const BROWSER_API_KEY = "AIzaSyCqbHUnLAXebrp7g3TEj68PGso5c4sUhy4";
-        const GEMINI_API_KEY = BROWSER_API_KEY; // Используем ключ для браузера
 
         let imageFilesState = [];
         let customBackgroundBase64 = null;
@@ -231,7 +229,8 @@
         });
         
         async function callGeminiAPI(payload, retries = 3, delay = 1000) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent?key=${GEMINI_API_KEY}`;
+            // API-ключ больше не нужен в URL, так как аутентификация обрабатывается средой
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image-preview:generateContent`;
             for (let i = 0; i < retries; i++) {
                 try {
                     const response = await fetch(apiUrl, {
@@ -241,7 +240,7 @@
                     });
                     if (!response.ok) {
                        if (response.status === 403) {
-                           throw new Error(`Ошибка доступа (403). Проверьте настройки API-ключа и убедитесь, что Generative Language API включен в проекте.`);
+                           throw new Error(`Ошибка доступа (403). Убедитесь, что API Generative Language включен в вашем проекте Google Cloud.`);
                         }
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
